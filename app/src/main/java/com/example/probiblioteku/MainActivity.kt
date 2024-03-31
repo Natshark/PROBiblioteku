@@ -28,8 +28,7 @@ class MainActivity : AppCompatActivity()
         }
         else
         {
-            val dbHelper = DatabaseHelper(this)
-            db = dbHelper.writableDatabase
+            db = DatabaseHelper(this).writableDatabase
 
             val loginButton: Button = findViewById(R.id.login_button)
             val ticketNumberEditText: EditText = findViewById(R.id.ticket_number_edittext)
@@ -44,6 +43,7 @@ class MainActivity : AppCompatActivity()
                     editor.apply()
 
                     val intent = Intent(this, ProfileActivity::class.java)
+                    intent.putExtra("ticketNumber", ticketNumber)
                     startActivity(intent)
                     finish()
                 }
