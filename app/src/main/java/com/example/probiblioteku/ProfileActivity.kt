@@ -53,6 +53,7 @@ class ProfileActivity : AppCompatActivity()
             val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
             val editor: SharedPreferences.Editor = sharedPreferences.edit()
             editor.putBoolean("isLoggedIn", false)
+            editor.putString("ticketNumber", "")
             editor.apply()
 
             val intent = Intent(this, MainActivity::class.java)
