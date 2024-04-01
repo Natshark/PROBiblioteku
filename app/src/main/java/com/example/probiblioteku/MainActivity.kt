@@ -23,7 +23,10 @@ class MainActivity : AppCompatActivity()
 
         if (isLoggedIn())
         {
-            startActivity(Intent(this, ProfileActivity::class.java))
+            val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            val intent = Intent(this, ProfileActivity::class.java)
+            intent.putExtra("ticketNumber", sharedPreferences.getString("ticketNumber", ""))
+            startActivity(intent)
             finish()
         }
         else
@@ -40,6 +43,7 @@ class MainActivity : AppCompatActivity()
                     val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
                     val editor: SharedPreferences.Editor = sharedPreferences.edit()
                     editor.putBoolean("isLoggedIn", true)
+                    editor.putString("ticketNumber", ticketNumber)
                     editor.apply()
 
                     val intent = Intent(this, ProfileActivity::class.java)
