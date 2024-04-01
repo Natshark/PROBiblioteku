@@ -17,6 +17,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.probiblioteku.BookDatabaseHelper.Companion.TABLE_NAME2
 import org.w3c.dom.Text
+import android.widget.ImageView
+
 
 class ProfileActivity : AppCompatActivity()
 {
@@ -105,5 +107,21 @@ class ProfileActivity : AppCompatActivity()
 
         // Установка адаптера для ListView
         bookListView.adapter = adapter
+
+        val buttonProfile: ImageView = findViewById(R.id.buttonProfile)
+        buttonProfile.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+        val buttonBooking: ImageView = findViewById(R.id.buttonBooking)
+        buttonBooking.setOnClickListener {
+            val intent = Intent(this, BookingActivity::class.java)
+            startActivity(intent)
+        }
+        val buttonNews: ImageView = findViewById(R.id.buttonNews)
+        buttonNews.setOnClickListener {
+            val intent = Intent(this, NewsActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
