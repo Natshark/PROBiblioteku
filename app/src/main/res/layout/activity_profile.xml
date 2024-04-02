@@ -30,18 +30,23 @@
 
     <TextView
         android:id="@+id/nameTextView"
-        android:layout_width="229dp"
+        android:layout_width="0dp"
         android:layout_height="62dp"
         android:layout_gravity="center"
-        android:layout_marginStart="30dp"
         android:fontFamily="@font/inter"
         android:gravity="center"
         android:textAlignment="textStart"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="bold"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeMaxTextSize="14sp"
         app:layout_constraintStart_toEndOf="@+id/profileLogo"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/logout_button"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"/>
 
     <ImageView
         android:id="@+id/profileLogo"
@@ -100,7 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginBottom="16dp"
-        android:alpha="0.3"
+        android:alpha="0.5"
         android:clickable="true"
         android:onClick="onImageButtonClick"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -112,7 +117,7 @@
         android:layout_width="29dp"
         android:layout_height="28dp"
         android:layout_marginBottom="16dp"
-        android:alpha="0.3"
+        android:alpha="0.5"
         android:clickable="true"
         android:onClick="onImageButtonClick"
         app:layout_constraintBottom_toBottomOf="parent"
