@@ -5,6 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import org.jsoup.Jsoup
+import java.io.IOException
+
 class NewsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,5 +31,30 @@ class NewsActivity : AppCompatActivity() {
             val intent = Intent(this, NewsActivity::class.java)
             startActivity(intent)
         }
+
+
+
+        runBlocking {
+            // Запуск корутины для выполнения сетевого запроса
+            withContext(Dispatchers.IO) {
+                // URL сайта для парсинга
+                val url = "https://lib.ugrasu.ru/"
+
+                try {
+                    // Получение объекта Document, представляющего веб-страницу
+                    val document = Jsoup.connect(url).get()
+
+                    // Получение заголовка сайта (тег <title>)
+                    val title = document.title()
+
+                    // Вывод заголовка в консоль
+                    println("Заголовок сайта: $title")
+                } catch (e: IOException) {
+                    // Обработка ошибок, связанных с подключением к сайту
+                    println("Ошибка при подключении к сайту: ${e.message}")
+                }
+            }
+        }
+
     }
 }
