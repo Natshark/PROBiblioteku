@@ -23,42 +23,27 @@
             tools:context=".BookingActivity">
 
             <EditText
-                android:id="@+id/surname_edittext"
+                android:id="@+id/name_surname_patronymic_edittext"
                 style="@style/MyCustomEditTextStyle"
                 android:layout_width="300dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="11dp"
-                android:ems="10"
                 android:fontFamily="@font/inter"
-                android:hint="*Фамилия"
+                android:hint="*ФИО"
                 android:inputType="text"
                 android:textAlignment="center"
-                android:textSize="15sp"
+                android:textSize="14sp"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="5sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.495"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <EditText
-                android:id="@+id/name_edittext"
-                style="@style/MyCustomEditTextStyle"
-                android:layout_width="300dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="11dp"
-                android:ems="10"
-                android:fontFamily="@font/inter"
-                android:hint="*Имя"
-                android:inputType="text"
-                android:textAlignment="center"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/surname_edittext" />
 
             <EditText
-                android:id="@+id/patronymic_edittext"
+                android:id="@+id/date_edittext"
                 style="@style/MyCustomEditTextStyle"
                 android:layout_width="300dp"
                 android:layout_height="50dp"
@@ -66,14 +51,48 @@
                 android:layout_marginTop="11dp"
                 android:ems="10"
                 android:fontFamily="@font/inter"
-                android:hint="*Отчество"
-                android:inputType="text"
+                android:hint="*Дата"
+                android:inputType="none"
                 android:textAlignment="center"
                 android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.495"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/name_edittext" />
+                app:layout_constraintTop_toBottomOf="@+id/name_surname_patronymic_edittext" />
+
+            <EditText
+                android:id="@+id/time_edittext"
+                style="@style/MyCustomEditTextStyle"
+                android:layout_width="140dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="11dp"
+                android:layout_marginEnd="10dp"
+                android:ems="10"
+                android:fontFamily="@font/inter"
+                android:hint="с 00:00"
+                android:inputType="none"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toStartOf="@+id/helper"
+                app:layout_constraintTop_toBottomOf="@+id/date_edittext" />
+
+            <EditText
+                android:id="@+id/time_edittext1"
+                style="@style/MyCustomEditTextStyle"
+                android:layout_width="140dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="11dp"
+                android:ems="10"
+                android:fontFamily="@font/inter"
+                android:hint="до 00:00"
+                android:inputType="none"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                app:layout_constraintStart_toEndOf="@+id/helper"
+                app:layout_constraintTop_toBottomOf="@+id/date_edittext" />
 
             <EditText
                 android:id="@+id/number_phone_edittext"
@@ -85,12 +104,14 @@
                 android:ems="10"
                 android:fontFamily="@font/inter"
                 android:hint="*Номер телефона"
-                android:inputType="text"
+                android:inputType="number"
                 android:textAlignment="center"
                 android:textSize="15sp"
+                android:maxLength="11"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.495"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/patronymic_edittext" />
+                app:layout_constraintTop_toBottomOf="@+id/time_edittext" />
 
             <EditText
                 android:id="@+id/description_edittext"
@@ -101,9 +122,13 @@
                 android:ems="10"
                 android:fontFamily="@font/inter"
                 android:gravity="top|start"
-                android:hint="*Описание(цель бронирования, \nнеобходимое оборудование,\n количество человек,\n дата и время)"
+                android:maxLength="210"
+                android:hint="*Описание(цель бронирования, \nнеобходимое оборудование,\n количество человек)"
                 android:inputType="textMultiLine"
-                android:textSize="15sp"
+                android:textSize="14sp"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeMaxTextSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/number_phone_edittext" />
@@ -121,6 +146,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/description_edittext"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/helper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:layout_marginBottom="28dp"
+                app:layout_constraintBottom_toTopOf="@+id/number_phone_edittext"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/date_edittext"
                 app:layout_constraintVertical_bias="0.0" />
 
 
