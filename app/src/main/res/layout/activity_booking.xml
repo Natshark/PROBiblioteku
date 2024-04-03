@@ -2,14 +2,135 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".BookingActivity">
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/imageView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bookingTextView">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".BookingActivity">
+
+            <EditText
+                android:id="@+id/surname_edittext"
+                style="@style/MyCustomEditTextStyle"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="11dp"
+                android:ems="10"
+                android:fontFamily="@font/inter"
+                android:hint="*Фамилия"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.495"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/name_edittext"
+                style="@style/MyCustomEditTextStyle"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="11dp"
+                android:ems="10"
+                android:fontFamily="@font/inter"
+                android:hint="*Имя"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/surname_edittext" />
+
+            <EditText
+                android:id="@+id/patronymic_edittext"
+                style="@style/MyCustomEditTextStyle"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="11dp"
+                android:ems="10"
+                android:fontFamily="@font/inter"
+                android:hint="*Отчество"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.495"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/name_edittext" />
+
+            <EditText
+                android:id="@+id/number_phone_edittext"
+                style="@style/MyCustomEditTextStyle"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="11dp"
+                android:ems="10"
+                android:fontFamily="@font/inter"
+                android:hint="*Номер телефона"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/patronymic_edittext" />
+
+            <EditText
+                android:id="@+id/description_edittext"
+                style="@style/MyCustomEditTextStyle"
+                android:layout_width="308dp"
+                android:layout_height="167dp"
+                android:layout_marginTop="11dp"
+                android:ems="10"
+                android:fontFamily="@font/inter"
+                android:gravity="top|start"
+                android:hint="*Описание(цель бронирования, \nнеобходимое оборудование,\n количество человек,\n дата и время)"
+                android:inputType="textMultiLine"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/number_phone_edittext" />
+
+
+            <WebView
+                android:id="@+id/webViewCalendar"
+                android:layout_width="fill_parent"
+                android:layout_height="1500dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toTopOf="@+id/imageView4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/description_edittext"
+                app:layout_constraintVertical_bias="0.0" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <TextView
         android:id="@+id/bookingTextView"
         android:layout_width="match_parent"
-        android:layout_height="43dp"
+        android:layout_height="62dp"
         android:layout_gravity="center"
         android:background="#F0F0F0"
         android:fontFamily="@font/inter_bold"
@@ -22,93 +143,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/surname_edittext"
-        style="@style/MyCustomEditTextStyle"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:ems="10"
-        android:fontFamily="@font/inter"
-        android:hint="*Фамилия"
-        android:inputType="text"
-        android:textAlignment="center"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bookingTextView" />
-
-    <EditText
-        android:id="@+id/name_edittext"
-        style="@style/MyCustomEditTextStyle"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="11dp"
-        android:ems="10"
-        android:fontFamily="@font/inter"
-        android:hint="*Имя"
-        android:inputType="text"
-        android:textAlignment="center"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/surname_edittext" />
-
-    <EditText
-        android:id="@+id/patronymic_edittext"
-        style="@style/MyCustomEditTextStyle"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="11dp"
-        android:ems="10"
-        android:fontFamily="@font/inter"
-        android:hint="*Отчество"
-        android:inputType="text"
-        android:textAlignment="center"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_edittext" />
-
-    <EditText
-        android:id="@+id/number_phone_edittext"
-        style="@style/MyCustomEditTextStyle"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="11dp"
-        android:ems="10"
-        android:fontFamily="@font/inter"
-        android:hint="*Номер телефона"
-        android:inputType="text"
-        android:textAlignment="center"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/patronymic_edittext" />
-
-    <EditText
-        android:id="@+id/description_edittext"
-        style="@style/MyCustomEditTextStyle"
-        android:layout_width="308dp"
-        android:layout_height="167dp"
-        android:layout_marginTop="11dp"
-        android:ems="10"
-        android:fontFamily="@font/inter"
-        android:hint="*Описание(цель бронирования, \nнеобходимое оборудование,\n количество человек,\n дата и время)"
-        android:inputType="textMultiLine"
-        android:gravity="top|start"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/number_phone_edittext" />
-
 
     <ImageView
         android:id="@+id/imageView4"
@@ -157,5 +191,4 @@
         app:layout_constraintEnd_toStartOf="@+id/buttonProfile"
         app:layout_constraintStart_toEndOf="@+id/buttonNews"
         app:srcCompat="@drawable/iconticket" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
