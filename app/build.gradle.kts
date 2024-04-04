@@ -46,6 +46,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation ("com.sun.mail:javax.mail:1.6.2")
+    implementation("com.squareup.picasso:picasso:2.71828")
     implementation ("org.jsoup:jsoup:1.14.3")
 
 }
