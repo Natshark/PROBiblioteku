@@ -1,24 +1,26 @@
 package com.example.probiblioteku
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.widget.ImageView
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-
-import android.widget.EditText;
-import android.app.DatePickerDialog;
+import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.TypedValue
-import android.view.View;
-import android.widget.DatePicker;
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.widget.Button
+import android.widget.DatePicker
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TimePicker
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
-import java.util.Calendar;
-import java.util.Locale
+import java.util.*
+import javax.mail.*
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeMessage
 
 
 class BookingActivity : AppCompatActivity() {
@@ -105,7 +107,8 @@ class BookingActivity : AppCompatActivity() {
         }
 
         // время с
-        val timeEditText: EditText = findViewById(R.id.time_edittext)
+        val timeEditText: EditText = findViewById(R.id.time_edittext) // time
+
         timeEditText.keyListener = null
         val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
@@ -128,7 +131,8 @@ class BookingActivity : AppCompatActivity() {
         }
 
         // время до
-        val timeEditText1: EditText = findViewById(R.id.time_edittext1)
+        val timeEditText1: EditText = findViewById(R.id.time_edittext1) // time
+
         timeEditText1.keyListener = null
         val hourOfDay1 = calendar.get(Calendar.HOUR_OF_DAY)
         val minute1 = calendar.get(Calendar.MINUTE)
@@ -150,5 +154,70 @@ class BookingActivity : AppCompatActivity() {
             timeEditText1.clearFocus()
         }
 
+        // формирование и отправка письма с проверками
+        val fullname: EditText = findViewById(R.id.name_surname_patronymic_edittext)
+        val numberphone: EditText = findViewById(R.id.number_phone_edittext)
+        val description: EditText = findViewById(R.id.description_edittext)
+        val submitButton: Button = findViewById(R.id.submit_button)
+        // timeEditText - время С, timeEditText1 - время ДО, dateEditText - дата
+
+        submitButton.setOnClickListener {
+            val fullname_text = fullname.text.toString().trim()
+            val numberphone_text = numberphone.text.toString().trim()
+            val description_text = description.text.toString().trim()
+            val time_text = timeEditText.text.toString().trim()
+            val time_text1 = timeEditText1.text.toString().trim()
+            val date_text = dateEditText.text.toString().trim()
+
+            fun countWords(editText: EditText): Int {
+                val text = editText.text.toString().trim()
+                val words = text.split("\\s+".toRegex()).filter { it.isNotEmpty() }
+                return words.size
+            }
+            fun selectSimvol(time: String, time1: String) : Boolean {
+                val time_hh: Int = "${time[0]}${time[1]}".toInt()
+                val time_mm: Int = "${time[3]}${time[4]}".toInt()
+                val time_hh1: Int = "${time1[0]}${time1[1]}".toInt()
+                val time_mm1: Int = "${time1[3]}${time1[4]}".toInt()
+
+                if (time_hh < 8 || time_hh >= 18 || time_hh1 < 8 || time_hh1 >= 18) {
+                    return false
+                }
+                else if (time_hh > time_hh1) {
+                    return false
+                }
+                else if (time_hh == time_hh1) {
+                    if (time_mm > time_mm1) {
+                        return false
+                    }
+                    else {
+                        return true
+                    }
+                }
+                else {
+                    return true
+                }
+
+            }
+
+            if (fullname_text == "" || numberphone_text == "" || description_text == "" || time_text == "" || time_text1 == "" || date_text == "") {
+                Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
+            }
+            else if (countWords(fullname) != 3) {
+                Toast.makeText(this, "Проверьте правильность ввода ФИО", Toast.LENGTH_SHORT).show()
+            }
+            else if (numberphone_text.length != 11) {
+                Toast.makeText(this, "Проверьте правильность ввода номера телефона", Toast.LENGTH_SHORT).show()
+            }
+            else if (!selectSimvol(time_text, time_text1)) {
+                Toast.makeText(this, "Проверьте правильность ввода даты и времени", Toast.LENGTH_SHORT).show()
+            }
+            else {
+
+            }
+
+        }
+
     }
+
 }
