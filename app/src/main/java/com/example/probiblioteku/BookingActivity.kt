@@ -17,10 +17,8 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
-import java.util.*
-import javax.mail.*
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeMessage
+import java.util.Calendar
+import java.util.Locale
 
 
 class BookingActivity : AppCompatActivity() {
@@ -61,8 +59,7 @@ class BookingActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s?.length ?: 0 > 37) {
                     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10F)
-                }
-                else if (s?.length ?: 0 > 30) {
+                } else if (s?.length ?: 0 > 30) {
                     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12F)
                 } else {
                     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
@@ -72,7 +69,6 @@ class BookingActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
             }
         })
-
 
 
         // динамичный выбор даты и времени
@@ -92,10 +88,12 @@ class BookingActivity : AppCompatActivity() {
                 calendar.set(Calendar.MONTH, month)
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                val selectedDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(calendar.time)
+                val selectedDate =
+                    SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(calendar.time)
                 dateEditText.setText(selectedDate)
                 dateEditText.clearFocus()
-            }, year, month, dayOfMonth)
+            }, year, month, dayOfMonth
+        )
 
         dateEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -119,7 +117,8 @@ class BookingActivity : AppCompatActivity() {
                 val selectedTime = String.format("%02d:%02d", hourOfDay, minute)
                 timeEditText.setText(selectedTime)
                 timeEditText.clearFocus()
-            }, hourOfDay, minute, true)
+            }, hourOfDay, minute, true
+        )
 
         timeEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -143,7 +142,8 @@ class BookingActivity : AppCompatActivity() {
                 val selectedTime = String.format("%02d:%02d", hourOfDay, minute)
                 timeEditText1.setText(selectedTime)
                 timeEditText1.clearFocus()
-            }, hourOfDay1, minute1, true)
+            }, hourOfDay1, minute1, true
+        )
 
         timeEditText1.setOnFocusChangeListener { _, hasFocus1 ->
             if (hasFocus1) {
@@ -174,7 +174,8 @@ class BookingActivity : AppCompatActivity() {
                 val words = text.split("\\s+".toRegex()).filter { it.isNotEmpty() }
                 return words.size
             }
-            fun selectSimvol(time: String, time1: String) : Boolean {
+
+            fun selectSimvol(time: String, time1: String): Boolean {
                 val time_hh: Int = "${time[0]}${time[1]}".toInt()
                 val time_mm: Int = "${time[3]}${time[4]}".toInt()
                 val time_hh1: Int = "${time1[0]}${time1[1]}".toInt()
@@ -182,19 +183,15 @@ class BookingActivity : AppCompatActivity() {
 
                 if (time_hh < 8 || time_hh >= 18 || time_hh1 < 8 || time_hh1 >= 18) {
                     return false
-                }
-                else if (time_hh > time_hh1) {
+                } else if (time_hh > time_hh1) {
                     return false
-                }
-                else if (time_hh == time_hh1) {
+                } else if (time_hh == time_hh1) {
                     if (time_mm > time_mm1) {
                         return false
-                    }
-                    else {
+                    } else {
                         return true
                     }
-                }
-                else {
+                } else {
                     return true
                 }
 
@@ -202,22 +199,40 @@ class BookingActivity : AppCompatActivity() {
 
             if (fullname_text == "" || numberphone_text == "" || description_text == "" || time_text == "" || time_text1 == "" || date_text == "") {
                 Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
-            }
-            else if (countWords(fullname) != 3) {
+            } else if (countWords(fullname) != 3) {
                 Toast.makeText(this, "Проверьте правильность ввода ФИО", Toast.LENGTH_SHORT).show()
-            }
-            else if (numberphone_text.length != 11) {
-                Toast.makeText(this, "Проверьте правильность ввода номера телефона", Toast.LENGTH_SHORT).show()
-            }
-            else if (!selectSimvol(time_text, time_text1)) {
-                Toast.makeText(this, "Проверьте правильность ввода даты и времени", Toast.LENGTH_SHORT).show()
+            } else if (numberphone_text.length != 11) {
+                Toast.makeText(
+                    this,
+                    "Проверьте правильность ввода номера телефона",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (!selectSimvol(time_text, time_text1)) {
+                Toast.makeText(
+                    this,
+                    "Проверьте правильность ввода даты и времени",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             else {
+                val messageText = "ФИО: " + fullname_text + "\n" + "Дата и время: " + date_text + " с " + time_text + " до " + time_text1 + "\n" + "Номер телефона: " + numberphone_text + "\n" + "Пожелания(описание): " + description_text + "\n" + "Пользователь ожидает вашего звонка!"
+                sendEmailInBackground(messageText)
 
+                fullname.setText("")
+                numberphone.setText("")
+                description.setText("")
+                timeEditText.setText("")
+                timeEditText1.setText("")
+                dateEditText.setText("")
+
+                Toast.makeText(
+                    this,
+                    "Заявка отправлена! Ожидайте звонок",
+                    Toast.LENGTH_LONG
+                ).show()
             }
 
         }
 
     }
-
 }
