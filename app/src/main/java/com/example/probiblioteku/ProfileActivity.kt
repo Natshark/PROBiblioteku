@@ -18,15 +18,38 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.probiblioteku.BookDatabaseHelper.Companion.TABLE_NAME2
 import org.w3c.dom.Text
 import android.widget.ImageView
-
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
 
 class ProfileActivity : AppCompatActivity()
 {
+    fun callPythonFunctionWithArgument(inputString: String): String {
+        println(0)
+        // Инициализация Python, если это еще не сделано
+        if (!Python.isStarted()) {
+            Python.start(AndroidPlatform(applicationContext))
+        }
+        println(1)
+
+        try {
+            val python = Python.getInstance()
+            val module = python.getModule("main")
+            val result = module.callAttr("f", inputString).toString()
+            return result
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return "Error: ${e.message}"
+        }
+    }
     @SuppressLint("Range", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
+
+        val input = "Test"
+        val output = callPythonFunctionWithArgument(input)
+        println(4)
 
         val intent = intent
         val ticketNumber = intent.getStringExtra("ticketNumber")
@@ -48,6 +71,9 @@ class ProfileActivity : AppCompatActivity()
             nameTextView.text = "$lastName $firstName $middleName"
         }
         cursor2.close()
+
+
+        nameTextView.text = output
 
         val logoutButton: Button = findViewById(R.id.logout_button)
         logoutButton.setOnClickListener()

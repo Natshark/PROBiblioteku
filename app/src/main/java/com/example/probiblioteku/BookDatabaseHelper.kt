@@ -25,15 +25,6 @@ class BookDatabaseHelper(context: Context) : SQLiteOpenHelper(context, "BookData
         insertTicketNumber(db, "Химия", "10.03.2024")
         insertTicketNumber(db, "Плотничество", "12.02.2024")
         insertTicketNumber(db, "Кузнеческое дело", "15.01.2024")
-        insertTicketNumber(db, "Математика", "29.07.2024")
-        insertTicketNumber(db, "История", "14.06.2024")
-        insertTicketNumber(db, "Основы програмирования: путь к успеху. ГЛАВНОЕ — НАЧАТЬ!!!)", "25.05.2024")
-        insertTicketNumber(db, "Биология беспозвоночных.Первый том", "25.05.2024")
-        insertTicketNumber(db, "История Семи королевств", "01.05.2024")
-        insertTicketNumber(db, "Физкультура", "14.04.2024")
-        insertTicketNumber(db, "Химия", "10.03.2024")
-        insertTicketNumber(db, "Плотничество", "12.02.2024")
-        insertTicketNumber(db, "Кузнеческое дело", "15.01.2024")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int)

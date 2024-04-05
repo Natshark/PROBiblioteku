@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.chaquo.python") version "15.0.1"
 }
-
 android {
     namespace = "com.example.probiblioteku"
     compileSdk = 34
@@ -13,8 +13,10 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
     }
 
     buildTypes {
@@ -43,9 +45,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
     implementation(fileTree("libs") { include("*.jar") })
     implementation("com.squareup.picasso:picasso:2.71828")
     implementation ("org.jsoup:jsoup:1.14.3")
-
+    implementation("com.chaquo.python.runtime:chaquopy:15.0.1")
 }
