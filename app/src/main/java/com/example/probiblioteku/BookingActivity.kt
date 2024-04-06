@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Patterns
 import android.util.TypedValue
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
 
 
 class BookingActivity : AppCompatActivity() {
@@ -43,7 +45,7 @@ class BookingActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Подгружаемый календарь яндекса
+        // подгружаемый календарь яндекса
         val webView: WebView = findViewById(R.id.webViewCalendar)
         val webSettings: WebSettings = webView.settings
         webSettings.javaScriptEnabled = true
@@ -157,6 +159,7 @@ class BookingActivity : AppCompatActivity() {
         // формирование и отправка письма с проверками
         val fullname: EditText = findViewById(R.id.name_surname_patronymic_edittext)
         val numberphone: EditText = findViewById(R.id.number_phone_edittext)
+        val email: EditText = findViewById(R.id.email_edittext)
         val description: EditText = findViewById(R.id.description_edittext)
         val submitButton: Button = findViewById(R.id.submit_button)
         // timeEditText - время С, timeEditText1 - время ДО, dateEditText - дата
@@ -164,6 +167,7 @@ class BookingActivity : AppCompatActivity() {
         submitButton.setOnClickListener {
             val fullname_text = fullname.text.toString().trim()
             val numberphone_text = numberphone.text.toString().trim()
+            val email_text = email.text.toString().trim()
             val description_text = description.text.toString().trim()
             val time_text = timeEditText.text.toString().trim()
             val time_text1 = timeEditText1.text.toString().trim()
@@ -173,6 +177,10 @@ class BookingActivity : AppCompatActivity() {
                 val text = editText.text.toString().trim()
                 val words = text.split("\\s+".toRegex()).filter { it.isNotEmpty() }
                 return words.size
+            }
+
+            fun isValidEmail(email: String): Boolean {
+                return Patterns.EMAIL_ADDRESS.matcher(email).matches()
             }
 
             fun checkDateTime(time: String, time1: String): Boolean {
@@ -201,17 +209,26 @@ class BookingActivity : AppCompatActivity() {
 
             }
 
-            if (fullname_text == "" || numberphone_text == "" || description_text == "" || time_text == "" || time_text1 == "" || date_text == "") {
+            if (fullname_text == "" || numberphone_text == "" || description_text == "" || time_text == "" || time_text1 == "" || date_text == "" || email_text == "") {
                 Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
             } else if (countWords(fullname) < 2) {
                 Toast.makeText(this, "Проверьте правильность ввода ФИО", Toast.LENGTH_SHORT).show()
-            } else if (numberphone_text.length != 10 && numberphone_text.length != 11) {
+            }
+            else if (numberphone_text.length != 10 && numberphone_text.length != 11) {
                 Toast.makeText(
                     this,
                     "Проверьте правильность ввода номера телефона",
                     Toast.LENGTH_SHORT
                 ).show()
-            } else if (!checkDateTime(time_text, time_text1)) {
+            }
+            else if (!isValidEmail(email_text)) {
+                Toast.makeText(
+                    this,
+                    "Проверьте правильность ввода Email",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else if (!checkDateTime(time_text, time_text1)) {
                 Toast.makeText(
                     this,
                     "Проверьте правильность ввода даты и времени",
@@ -219,8 +236,9 @@ class BookingActivity : AppCompatActivity() {
                 ).show()
             }
             else {
-                val messageText = "ФИО: " + fullname_text + "\n" + "Дата и время: " + date_text + " с " + time_text + " до " + time_text1 + "\n" + "Номер телефона: " + numberphone_text + "\n" + "Пожелания(описание): " + description_text + "\n" + "Пользователь ожидает вашего звонка!"
-                sendEmailInBackground(messageText)
+                val messageText = "ФИО: " + fullname_text + "\n" + "Дата и время: " + date_text + " с " + time_text + " до " + time_text1 + "\n" + "Номер телефона: " + numberphone_text + "\n" + "Email: " + email_text + "\n" + "Пожелания(описание): " + description_text + "\n" + "Пользователь ожидает вашего звонка!"
+                CacheManager(this).saveData("message", messageText)
+                CacheManager(this).saveData("email", email_text)
 
                 fullname.setText("")
                 numberphone.setText("")
@@ -229,11 +247,8 @@ class BookingActivity : AppCompatActivity() {
                 timeEditText1.setText("")
                 dateEditText.setText("")
 
-                Toast.makeText(
-                    this,
-                    "Заявка отправлена! Ожидайте звонок",
-                    Toast.LENGTH_LONG
-                ).show()
+                val intent = Intent(this, ConfirmationBookingActivity::class.java)
+                startActivity(intent)
             }
 
         }
