@@ -199,7 +199,7 @@ class BookingActivity : AppCompatActivity() {
 
             if (fullname_text == "" || numberphone_text == "" || description_text == "" || time_text == "" || time_text1 == "" || date_text == "") {
                 Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
-            } else if (countWords(fullname) != 3) {
+            } else if (countWords(fullname) < 2) {
                 Toast.makeText(this, "Проверьте правильность ввода ФИО", Toast.LENGTH_SHORT).show()
             } else if (numberphone_text.length != 11) {
                 Toast.makeText(
