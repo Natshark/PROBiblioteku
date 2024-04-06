@@ -39,12 +39,13 @@ class NewsActivity : AppCompatActivity() {
                 val url = "https://lib.ugrasu.ru/"
                 val document = Jsoup.connect(url).get()
                 val titles = document.select(".news-title")
+                val dates = document.select(".news-date-time")
                 val urlImages = document.select(".preview_picture")
 
                 val newsList = mutableListOf<News>()
-                for (i in 0 until 4)
+                for (i in 0 until 8)
                 {
-                    val title = titles[i].text()
+                    val title = titles[i].text() + "\n" +  "\n" +dates[i].text()
                     val imageSrc = "https://lib.ugrasu.ru${urlImages[i].attr("src")}"
                     val href = "https://lib.ugrasu.ru${titles[i].select("a").first()?.attr("href")}"
                     newsList.add(News(title, imageSrc, href))
