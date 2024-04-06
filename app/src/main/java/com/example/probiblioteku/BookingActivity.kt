@@ -175,7 +175,7 @@ class BookingActivity : AppCompatActivity() {
                 return words.size
             }
 
-            fun selectSimvol(time: String, time1: String): Boolean {
+            fun checkDateTime(time: String, time1: String): Boolean {
                 val time_hh: Int = "${time[0]}${time[1]}".toInt()
                 val time_mm: Int = "${time[3]}${time[4]}".toInt()
                 val time_hh1: Int = "${time1[0]}${time1[1]}".toInt()
@@ -183,15 +183,19 @@ class BookingActivity : AppCompatActivity() {
 
                 if (time_hh < 8 || time_hh >= 18 || time_hh1 < 8 || time_hh1 >= 18) {
                     return false
-                } else if (time_hh > time_hh1) {
+                }
+                else if (time_hh > time_hh1) {
                     return false
-                } else if (time_hh == time_hh1) {
-                    if (time_mm > time_mm1) {
+                }
+                else if (time_hh == time_hh1) {
+                    if (time_mm > time_mm1 || time_mm == time_mm1) {
                         return false
-                    } else {
+                    }
+                    else {
                         return true
                     }
-                } else {
+                }
+                else {
                     return true
                 }
 
@@ -201,13 +205,13 @@ class BookingActivity : AppCompatActivity() {
                 Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
             } else if (countWords(fullname) < 2) {
                 Toast.makeText(this, "Проверьте правильность ввода ФИО", Toast.LENGTH_SHORT).show()
-            } else if (numberphone_text.length != 11) {
+            } else if (numberphone_text.length != 10 && numberphone_text.length != 11) {
                 Toast.makeText(
                     this,
                     "Проверьте правильность ввода номера телефона",
                     Toast.LENGTH_SHORT
                 ).show()
-            } else if (!selectSimvol(time_text, time_text1)) {
+            } else if (!checkDateTime(time_text, time_text1)) {
                 Toast.makeText(
                     this,
                     "Проверьте правильность ввода даты и времени",
