@@ -12,7 +12,7 @@ import javax.mail.Session
 import javax.mail.Transport
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
-fun send_email(message_text_submit: String) {
+fun send_email(message_text_submit: String, subject: String, to: String) {
     val properties = Properties()
     properties["mail.smtp.host"] = "smtp.mail.ru"
     properties["mail.smtp.port"] = "587"
@@ -28,17 +28,18 @@ fun send_email(message_text_submit: String) {
     try {
         val message = MimeMessage(session)
         message.setFrom(InternetAddress("mobilelibraryugrasu@mail.ru"))
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("danyakovalugrasu@gmail.com"))
-        message.subject = "Заявка на бронирование"
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to))
+        message.subject = subject.toString()
         message.setText(message_text_submit)
         Transport.send(message)
-    } catch (e: MessagingException) {
+    }
+    catch (e: MessagingException) {
         println("Failed to send email. Error: ${e.message}")
     }
 }
 
-fun sendEmailInBackground(messageTextSubmit: String) {
+fun sendEmailInBackground(messageTextSubmit: String, subject: String, to: String) {
     GlobalScope.launch(Dispatchers.IO) {
-        send_email(messageTextSubmit)
+        send_email(messageTextSubmit, subject, to)
     }
 }
