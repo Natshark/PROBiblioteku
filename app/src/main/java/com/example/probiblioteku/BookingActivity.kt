@@ -17,9 +17,15 @@ import android.widget.ImageView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
+
 
 
 
@@ -183,13 +189,38 @@ class BookingActivity : AppCompatActivity() {
                 return Patterns.EMAIL_ADDRESS.matcher(email).matches()
             }
 
-            fun checkDateTime(time: String, time1: String): Boolean {
+            fun checkInputDate(inputDate: String): Boolean {
+                val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date()).toString()
+
+                val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                val currentDate_DateFormat = dateFormat.parse(currentDate)
+                val inputDate_DateFormat = dateFormat.parse(inputDate)
+
+                if (currentDate_DateFormat.before(inputDate_DateFormat)) {
+                    return true
+                }
+                else if (currentDate_DateFormat.after(inputDate_DateFormat)) {
+                    return false
+                }
+                else {
+                    return true
+                }
+            }
+
+
+            fun checkInputTime(time: String, time1: String): Boolean {
                 val time_hh: Int = "${time[0]}${time[1]}".toInt()
                 val time_mm: Int = "${time[3]}${time[4]}".toInt()
                 val time_hh1: Int = "${time1[0]}${time1[1]}".toInt()
                 val time_mm1: Int = "${time1[3]}${time1[4]}".toInt()
 
                 if (time_hh < 8 || time_hh >= 18 || time_hh1 < 8 || time_hh1 >= 18) {
+                    if (time_hh == 18) {
+                        return false
+                    }
+                    else if (time_hh1 == 18 && time_mm1 == 0) {
+                        return true
+                    }
                     return false
                 }
                 else if (time_hh > time_hh1) {
@@ -207,6 +238,64 @@ class BookingActivity : AppCompatActivity() {
                     return true
                 }
 
+            }
+
+            fun replaceMonthsAndRemoveSpaces(input: String): String {
+                val monthsMap = mapOf(
+                    "января" to "01",
+                    "февраля" to "02",
+                    "марта" to "03",
+                    "апреля" to "04",
+                    "мая" to "05",
+                    "июня" to "06",
+                    "июля" to "07",
+                    "августа" to "08",
+                    "сентября" to "09",
+                    "октября" to "10",
+                    "ноября" to "11",
+                    "декабря" to "12"
+                )
+
+                var result = input
+                for ((month, number) in monthsMap) {
+                    result = result.replace(month, number)
+                }
+                return result.replace(" ", "")
+            }
+
+            fun parseDateTime(date: String, time: String, time1: String): Boolean {
+                val doc = Jsoup.connect("https://calendar.yandex.ru/export/html.xml?private_token=59ea5b32855e5e88227a40a5b6ea1298265bdea6&tz_id=Asia/Yekaterinburg&limit=90").get()
+                val spans = doc.select("span") // выбираем все элементы span
+                val spanTexts = mutableListOf<String>()
+                for (span in spans) {
+                    val replacedText = replaceMonthsAndRemoveSpaces(span.text())
+                    spanTexts.add(replacedText)
+                }
+                val dateList = spanTexts.map { it.substring(0, it.length - 5) }.map { it.substring(0, 2) + "." + it.substring(2, 4) + "." + it.substring(4) }
+                val timeList = spanTexts.map { it.substring(it.length - 5) }
+
+                for (i in dateList.indices step 2) {
+                    if (dateList[i] == date) {
+                        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+                        val formattedStartTime = sdf.parse(timeList[i])
+                        val formattedEndTime = sdf.parse(timeList[i+1])
+
+                        val formattedCheckTime = sdf.parse(time)
+                        val formattedCheckTime1 = sdf.parse(time1)
+
+                        if (formattedCheckTime in formattedStartTime..formattedEndTime || formattedCheckTime1 in formattedStartTime..formattedEndTime) {
+                            return false
+                        }
+                    }
+                }
+                return true
+
+            }
+
+            fun startParseDateTimeInBackground(date: String, time: String, time1: String): Boolean = runBlocking {
+                val result = async(Dispatchers.IO) { parseDateTime(date, time, time1) }
+                result.await()
             }
 
             if (fullname_text == "" || numberphone_text == "" || description_text == "" || time_text == "" || time_text1 == "" || date_text == "" || email_text == "") {
@@ -228,10 +317,17 @@ class BookingActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            else if (!checkDateTime(time_text, time_text1)) {
+            else if (!checkInputTime(time_text, time_text1) || !checkInputDate(date_text)) {
                 Toast.makeText(
                     this,
                     "Проверьте правильность ввода даты и времени",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else if (!startParseDateTimeInBackground(date_text, time_text, time_text1)) {
+                Toast.makeText(
+                    this,
+                    "Выбранная дата и время заняты",
                     Toast.LENGTH_SHORT
                 ).show()
             }
