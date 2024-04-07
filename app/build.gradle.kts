@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.chaquo.python") version "15.0.1"
+    id("com.chaquo.python")
 }
 android {
     namespace = "com.example.probiblioteku"
@@ -17,6 +17,15 @@ android {
         ndk {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
         }
+        flavorDimensions += "pyVersion"
+        productFlavors {
+            create("py310") { dimension = "pyVersion" }
+        }
+        chaquopy {
+            productFlavors {
+                getByName("py310") { version = "3.10" }
+            }
+        }
     }
 
     buildTypes {
@@ -28,13 +37,16 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildToolsVersion = "34.0.0"
 }
 
 dependencies {

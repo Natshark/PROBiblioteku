@@ -24,32 +24,22 @@ import com.chaquo.python.android.AndroidPlatform
 class ProfileActivity : AppCompatActivity()
 {
     fun callPythonFunctionWithArgument(inputString: String): String {
-        println(0)
-        // Инициализация Python, если это еще не сделано
-        if (!Python.isStarted()) {
+        if (!Python.isStarted())
+        {
             Python.start(AndroidPlatform(applicationContext))
         }
-        println(1)
-
-        try {
-            val python = Python.getInstance()
-            val module = python.getModule("main")
-            val result = module.callAttr("f", inputString).toString()
-            return result
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return "Error: ${e.message}"
-        }
+        val python = Python.getInstance()
+        val module = python.getModule("main")
+        val result = module.callAttr("get_reader_name", inputString).toString()
+        return result
     }
     @SuppressLint("Range", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-
-        val input = "Test"
-        val output = callPythonFunctionWithArgument(input)
-        println(4)
+        val input = "01356131"
+        //val output = callPythonFunctionWithArgument(input)
 
         val intent = intent
         val ticketNumber = intent.getStringExtra("ticketNumber")
@@ -73,7 +63,7 @@ class ProfileActivity : AppCompatActivity()
         cursor2.close()
 
 
-        nameTextView.text = output
+        //nameTextView.text = output
 
         val logoutButton: Button = findViewById(R.id.logout_button)
         logoutButton.setOnClickListener()
