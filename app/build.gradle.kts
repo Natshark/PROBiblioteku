@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.chaquo.python")
 }
 android {
     namespace = "com.example.probiblioteku"
@@ -14,18 +13,6 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        ndk {
-            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-        }
-        flavorDimensions += "pyVersion"
-        productFlavors {
-            create("py310") { dimension = "pyVersion" }
-        }
-        chaquopy {
-            productFlavors {
-                getByName("py310") { version = "3.10" }
-            }
-        }
     }
 
     buildTypes {
@@ -50,6 +37,7 @@ android {
 }
 
 dependencies {
+    //noinspection GradleCompatible,GradleCompatible
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
@@ -60,5 +48,4 @@ dependencies {
     implementation(fileTree("libs") { include("*.jar") })
     implementation("com.squareup.picasso:picasso:2.71828")
     implementation ("org.jsoup:jsoup:1.14.3")
-    implementation("com.chaquo.python.runtime:chaquopy:15.0.1")
 }

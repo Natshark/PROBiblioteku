@@ -7,8 +7,11 @@ import android.content.SharedPreferences
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
@@ -16,54 +19,155 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.probiblioteku.BookDatabaseHelper.Companion.TABLE_NAME2
-import org.w3c.dom.Text
 import android.widget.ImageView
-import com.chaquo.python.Python
-import com.chaquo.python.android.AndroidPlatform
+import org.jsoup.Jsoup
 
 class ProfileActivity : AppCompatActivity()
 {
-    fun callPythonFunctionWithArgument(inputString: String): String {
-        if (!Python.isStarted())
-        {
-            Python.start(AndroidPlatform(applicationContext))
-        }
-        val python = Python.getInstance()
-        val module = python.getModule("main")
-        val result = module.callAttr("get_reader_name", inputString).toString()
-        return result
-    }
-    @SuppressLint("Range", "SetTextI18n")
+
+    @SuppressLint("Range", "SetTextI18n", "ClickableViewAccessibility", "SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-        val input = "01356131"
-        //val output = callPythonFunctionWithArgument(input)
 
         val intent = intent
         val ticketNumber = intent.getStringExtra("ticketNumber")
         val nameTextView: TextView = findViewById(R.id.nameTextView)
+        nameTextView.text = intent.getStringExtra("name")
 
-        val db2 = DatabaseHelper(this).readableDatabase
-        val query = "SELECT ${DatabaseHelper.COLUMN_FIRST_NAME}, " +
-                "${DatabaseHelper.COLUMN_LAST_NAME}, " +
-                "${DatabaseHelper.COLUMN_MIDDLE_NAME} " +
-                "FROM ${DatabaseHelper.TABLE_NAME} " +
-                "WHERE ${DatabaseHelper.COLUMN_TICKET_NUMBER} = ?"
-        val cursor2: Cursor = db2.rawQuery(query, arrayOf(ticketNumber))
-        if (cursor2.moveToFirst())
-        {
-            val firstName = cursor2.getString(cursor2.getColumnIndex(DatabaseHelper.COLUMN_FIRST_NAME))
-            val lastName = cursor2.getString(cursor2.getColumnIndex(DatabaseHelper.COLUMN_LAST_NAME))
-            val middleName = cursor2.getString(cursor2.getColumnIndex(DatabaseHelper.COLUMN_MIDDLE_NAME))
-
-            nameTextView.text = "$lastName $firstName $middleName"
+        var pageContent: String? = null
+        val irbisWebView : WebView = findViewById(R.id.irbisWebView)
+        irbisWebView.setVerticalScrollBarEnabled(false);
+        irbisWebView.setHorizontalScrollBarEnabled(false);
+        irbisWebView.settings.javaScriptEnabled = true
+        irbisWebView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                val jsScript = """
+                (function() {
+                    var xpathsToHide = [
+                        "/html/body/div[5]/div[1]/span",
+                        "/html/body/div[5]/div[1]",
+                        "/html/body/div[5]/div[2]/table/tbody/tr/td/span/a/img",
+                        "/html/body/div[5]/div[2]/div[1]",
+                        "/html/body/div[5]/div[2]/div[1]/div",
+                        "/html/body/div[5]/div[2]/div[1]/div/p",
+                        "/html/body/div[5]/div[2]/div[1]/div/img"
+                    ];
+                    var xpathsToKeep = [
+                        "/html/body/div[3]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div/fieldset/div/div[1]/span",
+                        "/html/body/div[3]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div/fieldset/div/div[1]",
+                        "/html/body/div[3]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div/fieldset/div",
+                        "/html/body/div[3]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div/fieldset",
+                        "/html/body/div[3]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div",
+                        "/html/body/div[3]/table/tbody/tr[1]/td/table/tbody/tr/td[2]",
+                        "/html/body/div[3]/table/tbody/tr[1]/td/table/tbody/tr",
+                        "/html/body/div[3]/table/tbody/tr[1]/td/table/tbody",
+                        "/html/body/div[3]/table/tbody/tr[1]/td/table",
+                        "/html/body/div[3]/table/tbody/tr[1]/td",
+                        "/html/body/div[3]/table/tbody/tr[1]",
+                        "/html/body/div[3]/table/tbody",
+                        "/html/body/div[3]/table",
+                        "/html/body/div[3]",
+                        "/html/body",
+                        "/html",
+                        "/"
+                    ];
+            
+                    // Найти все элементы на странице
+                    var allElements = document.evaluate(
+                        "//*",
+                        document,
+                        null,
+                        XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+                        null
+                    );
+            
+                    // Скрыть все элементы на странице
+                    for (var i = 0; i < allElements.snapshotLength; i++) {
+                        var element = allElements.snapshotItem(i);
+                        element.style.display = 'none';
+                    }
+            
+                    // Отобразить элементы, соответствующие XPath-выражениям
+                    for (var j = 0; j < xpathsToKeep.length; j++) {
+                        var xpathResult = document.evaluate(
+                            xpathsToKeep[j],
+                            document,
+                            null,
+                            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+                            null
+                        );
+            
+                        for (var k = 0; k < xpathResult.snapshotLength; k++) {
+                            var elementToShow = xpathResult.snapshotItem(k);
+                            elementToShow.style.display = 'block';
+                            elementToShow.style.color = "#000";
+                            elementToShow.style.border = "none";
+                            elementToShow.style.display = "flex";
+                            elementToShow.style.justifyContent = "center";
+                            elementToShow.style.fontFamily = "'Inter', sans-serif";
+                            elementToShow.style.textAlign = "center";
+                            if (k === 0 && j === 1) {
+                                // Применяем стили к элементу с индексом 1
+                                elementToShow.style.backgroundColor = "#5DB075";
+                                elementToShow.style.width = "100%";
+                                elementToShow.style.height = "50px";
+                                elementToShow.style.borderRadius = "20px";
+                                elementToShow.style.alignItems = "center";
+                                elementToShow.style.fontSize = "15px";
+                                elementToShow.style.fontWeight = "bold";
+                                elementToShow.style.cursor = "pointer";
+            
+                                elementToShow.addEventListener('click', function() {
+                                    for (var i = 0; i < xpathsToHide.length; i++) {
+                                        var el = document.evaluate(
+                                            xpathsToHide[i],
+                                            document,
+                                            null,
+                                            XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                            null
+                                        ).singleNodeValue;
+                                        if (el) {
+                                            el.style.display = 'none';
+                                        }
+                                    }
+                                    var mainDiv = document.evaluate(
+                                            "/html/body/div[5]",
+                                            document,
+                                            null,
+                                            XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                            null
+                                        ).singleNodeValue;
+                                    mainDiv.style.left = '0px';
+                                    mainDiv.style.right = '0px';
+                                    mainDiv.style.bottom = '0px';
+                                    mainDiv.style.border = '0px';
+                                    mainDiv.style.width = '100%';
+                                    mainDiv.style.height = '100%';
+                                    
+                                    var divWithText = document.evaluate(
+                                            "/html/body/div[5]/div[2]",
+                                            document,
+                                            null,
+                                            XPathResult.FIRST_ORDERED_NODE_TYPE,
+                                            null
+                                        ).singleNodeValue;
+                                    divWithText.style.bottom = '0px';
+                                    divWithText.style.border = '0px';
+                                    divWithText.style.height = '100%';
+                                });
+                            }
+                        }
+                    }
+                })();
+            """.trimIndent()
+                view?.evaluateJavascript(jsScript, null)
+            }
         }
-        cursor2.close()
 
-
-        //nameTextView.text = output
+        irbisWebView.loadUrl("https://irbis.ugrasu.ru/ISAPI/irbis64r_plus/cgiirbis_64_ft.exe?IS_FIRST_AUTH=false&C21COM=F&I21DBN=AUTHOR&P21DBN=FOND&Z21FLAGID=1&Z21ID=$ticketNumber&Z21FAMILY=&x=39&y=11")
 
         val logoutButton: Button = findViewById(R.id.logout_button)
         logoutButton.setOnClickListener()
@@ -78,51 +182,6 @@ class ProfileActivity : AppCompatActivity()
             startActivity(intent)
             finish()
         }
-        val bookListView: ListView = findViewById(R.id.bookListView)
-        val db = BookDatabaseHelper(this).readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME2", null)
-
-        val bookData = mutableListOf<Any>()
-        while (cursor.moveToNext())
-        {
-            val bookName = cursor.getString(cursor.getColumnIndex("book_name"))
-            val bookDate = cursor.getString(cursor.getColumnIndex("book_date"))
-
-            bookData.add(listOf(bookName, bookDate))
-        }
-        cursor.close()
-
-        val adapter = object : ArrayAdapter<Any>(
-            this,
-            R.layout.list_item,
-            R.id.bookNameTextView,
-            bookData
-        ) {
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = super.getView(position, convertView, parent)
-
-                val bookNameTextView: TextView = view.findViewById(R.id.bookNameTextView)
-                val dateTextView: TextView = view.findViewById(R.id.dateTextView)
-                val extendButton: Button = view.findViewById(R.id.extendButton)
-
-                val bookDataItem = getItem(position) as List<String>
-                val bookName = bookDataItem[0]
-                val bookDate = bookDataItem[1]
-
-                bookNameTextView.text = bookName
-                dateTextView.text = bookDate
-
-                extendButton.setOnClickListener()
-                {
-                    Toast.makeText(this@ProfileActivity, "Книга $bookName продлена", Toast.LENGTH_SHORT).show()
-                }
-
-                return view
-            }
-        }
-
-        // Установка адаптера для ListView
-        bookListView.adapter = adapter
 
         val buttonProfile: ImageView = findViewById(R.id.buttonProfile)
         buttonProfile.setOnClickListener {

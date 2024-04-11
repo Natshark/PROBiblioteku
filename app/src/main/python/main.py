@@ -1,94 +1,27 @@
-import irbis
-from datetime import datetime
-
-HOST = "192.168.0.99"  # "library1"
-# HOST = "192.168.6.30"
-PORT = 6666
-LOGIN = '1'
-PASS = '1'
-DATABASE = 'RDR'
-ARM = 'B'
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
 
-class IRBIS:
-    def __init__(self):
-        self.connect()
+def check_ticket_number_existence(ticket_number):
+    # chrome_options = Options()
+    # chrome_options.add_argument("--headless")
+    # chrome_options.add_experimental_option('androidPackage', 'com.android.chrome')
+    # browser = webdriver.Chrome('./chromedriver', options=chrome_options)
+    # browser.get("https://irbis.ugrasu.ru/ISAPI/irbis64r_plus/cgiirbis_64_ft.exe?C21COM=F&I21DBN=FOND_FULLTEXT&P21DBN=FOND&Z21ID=&S21CNR=5")
 
-    def connect(self):
-        # Connect to the server
-        self.client = irbis.Connection()
-        self.client.parse_connection_string(
-            f'host={HOST};port={PORT};database={DATABASE};user={LOGIN};password={PASS};arm={ARM};')
-        self.ini = self.client.connect()
+    # ticket_number_input = browser.find_element(By.NAME, "Z21ID")
+    # login_button = browser.find_element(By.XPATH, '/html/body/div[3]/table/tbody/tr[1]/td/div[4]/table/tbody/tr/td[6]/input')
+    # ticket_number_input.send_keys(ticket_number)
+    # login_button.click()
+    # try:
+    #     name = browser.find_element(By.XPATH, '//*[@id="ParamAuthor"]/fieldset/div/table/tbody/tr/td[1]').text.split('\n')
+    #     browser.quit()
+    #     return True
+    # except:
+    #     browser.quit()
+    #     return False
 
-    def check_connection(self):
-        clients = [cli.client_id for cli in self.client.get_server_stat().running_clients]
-        if not str(self.client.client_id) in clients:
-            return False
-        else:
-            return True
-
-    def find_reader(self, ticket_number):
-        if not self.check_connection():
-            self.connect()
-        found = self.client.search_all(f'"K={ticket_number}$"')
-        return found
-
-    def get_reader_name(self, reader_mfn):
-        if not self.check_connection():
-            self.connect()
-        reader_record = self.client.read_record(reader_mfn)
-
-        if reader_record:
-            surname = str(reader_record.fields[2])[3:]
-            name = str(reader_record.fields[3])[3:]
-            patronymic = str(reader_record.fields[4])[3:]
-            fio = surname + " " + name + " " + patronymic
-            return fio
-
-    @staticmethod
-    def is_debtor(return_date):
-        return return_date < datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-
-    def get_borrowed_books(self, reader_mfn):
-        if not self.check_connection():
-            self.connect()
-        record = self.client.read_record(reader_mfn)
-
-        borrowed_books = []
-        for field in record.all(40):
-            if field.have_subfield('a'):  # только записи с литературой, без посещений
-                if field.first('f').value == '******':  # только еще не сданная литература
-                    return_date = field.first_value('e')
-                    title = field.first_value('c')
-
-                    return_date_datetime = datetime.strptime(return_date, '%Y%m%d')
-                    return_date_fmt = return_date_datetime.strftime('%d.%m.%Y')
-
-                    borrowed_books.append([title, return_date_fmt, self.is_debtor(return_date_datetime)])
-
-        return borrowed_books
-
-
-def get_info(ticket_number):
-    irbis_instance = IRBIS()
-    irbis_instance.connect()
-    if not irbis_instance.check_connection():
-        print("Нет соединения!")
-    else:
-        reader = irbis_instance.find_reader(ticket_number)
-        if reader:
-            reader_mfn = reader[0]
-            print(irbis_instance.get_reader_name(reader_mfn))
-            for i in irbis_instance.get_borrowed_books(reader_mfn):
-                print(i[0])
-                print(i[1])
-                print(i[2])
-                print("--------------------------------------------------------------------------")
-        else:
-            print("Такого читательского билета нет")
-
-    #01356131 - Саня
-    #12720499 - Слава
-    #002020 - Наталья Сергеевна
-#get_info("12720499")
+def get_info():
+    ticket_number = "01356131"
+    print(check_ticket_number_existence(ticket_number))

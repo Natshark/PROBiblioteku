@@ -2,20 +2,45 @@ package com.example.probiblioteku
 
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import android.content.SharedPreferences
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
+import android.webkit.WebView
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import org.jsoup.Jsoup
 
 
 class MainActivity : AppCompatActivity()
 {
-    private lateinit var db: SQLiteDatabase
+    fun check_ticket_number_existence(ticket_number: String) : String?
+    {
+        var name : String? = null
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                val url = "https://irbis.ugrasu.ru/ISAPI/irbis64r_plus/cgiirbis_64_ft.exe?IS_FIRST_AUTH=false&C21COM=F&I21DBN=AUTHOR&P21DBN=FOND&Z21FLAGID=1&Z21ID=$ticket_number&Z21FAMILY=&x=39&y=11"
+                val document = Jsoup.connect(url).get()
+                try
+                {
+                    val nameElement = document.getElementById("ctrl_changePassword_Button")?.parent()
+                    name = nameElement?.text()?.split(' ')?.take(3)?.joinToString(" ")
+                }
+                catch (_: Exception)
+                {
+                }
+            }
+        }
+        return name
+    }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -27,28 +52,30 @@ class MainActivity : AppCompatActivity()
             val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
             val intent = Intent(this, ProfileActivity::class.java)
             intent.putExtra("ticketNumber", sharedPreferences.getString("ticketNumber", ""))
+            intent.putExtra("name", sharedPreferences.getString("name", ""))
             startActivity(intent)
             finish()
         }
         else
         {
-            db = DatabaseHelper(this).writableDatabase
-
             val loginButton: Button = findViewById(R.id.login_button)
             val ticketNumberEditText: EditText = findViewById(R.id.ticket_number_edittext)
 
             loginButton.setOnClickListener{
                 val ticketNumber = ticketNumberEditText.text.toString().trim()
-                if (checkTicketNumberExists(ticketNumber))
+                val name = check_ticket_number_existence(ticketNumber)
+                if (name != null)
                 {
                     val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
                     val editor: SharedPreferences.Editor = sharedPreferences.edit()
                     editor.putBoolean("isLoggedIn", true)
                     editor.putString("ticketNumber", ticketNumber)
+                    editor.putString("name", name)
                     editor.apply()
 
                     val intent = Intent(this, ProfileActivity::class.java)
                     intent.putExtra("ticketNumber", ticketNumber)
+                    intent.putExtra("name", name)
                     startActivity(intent)
                     finish()
                 }
@@ -80,14 +107,5 @@ class MainActivity : AppCompatActivity()
     {
         val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         return sharedPreferences.getBoolean("isLoggedIn", false)
-    }
-
-    private fun checkTicketNumberExists(ticketNumber: String): Boolean
-    {
-        val query = "SELECT * FROM ${DatabaseHelper.TABLE_NAME} WHERE ${DatabaseHelper.COLUMN_TICKET_NUMBER} = ?"
-        val cursor: Cursor = db.rawQuery(query, arrayOf(ticketNumber))
-        val exists = cursor.moveToFirst()
-        cursor.close()
-        return exists
     }
 }
