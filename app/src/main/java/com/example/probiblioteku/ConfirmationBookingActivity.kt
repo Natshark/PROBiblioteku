@@ -26,7 +26,7 @@ class ConfirmationBookingActivity : AppCompatActivity() {
             val confirmCode: EditText = findViewById(R.id.confirmationBookingEditText)
             val confirmCode_text = confirmCode.text.toString().trim()
             if (confirmCode_text == CacheManager(this).getData("confirmCode", "Error")) {
-                sendEmailInBackground(CacheManager(this).getData("message", "Error"), "Заявка на бронирование", "danyakovalugrasu@gmail.com")
+                sendEmailInBackground(CacheManager(this).getData("message", "Error"), "Заявка на бронирование", "e_detistova@ugrasu.ru")
                 val intent = Intent(this, BookingActivity::class.java)
                 startActivity(intent)
                 Toast.makeText(this, "Заявка отправлена.\nС вами свяжутся в ближайшее время", Toast.LENGTH_LONG).show()
